@@ -15,8 +15,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <scala.majorVersion>2.11</scala.majorVersion>
-        <scala.minorVersion>8</scala.minorVersion>
+        <scala.majorVersion>2.12</scala.majorVersion>
+        <scala.minorVersion>7</scala.minorVersion>
         <spark.version>1.6.1</spark.version>
         <spark.cassandra.connector.version>1.6.0</spark.cassandra.connector.version>
     </properties>
@@ -33,23 +33,25 @@
             <groupId>com.uber.sdk</groupId>
             <artifactId>uber-rides</artifactId>
             <version>0.8.0</version>
-        </dependency>
-
+        </dependency><!-- https://mvnrepository.com/artifact/com.uber.sdk/uber-rides -->
+        <!-- https://mvnrepository.com/artifact/com.gu/scanamo -->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.majorVersion}.${scala.minorVersion}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.gu/scanamo -->
         <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_${scala.majorVersion}</artifactId>
-            <version>${spark.version}</version>
+            <groupId>com.gu</groupId>
+            <artifactId>scanamo_2.12</artifactId>
+            <version>1.0.0-M6</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_${scala.majorVersion}</artifactId>
-            <version>${spark.version}</version>
+            <groupId>com.gu</groupId>
+            <artifactId>scanamo-testkit_2.12</artifactId>
+            <version>1.0.0-M7</version>
         </dependency>
+
     </dependencies>
 
     <repositories>
