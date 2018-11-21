@@ -1,4 +1,4 @@
-package DynamoDBConnector
+package DynamoDB
 
 import com.amazonaws.auth.{AWSStaticCredentialsProvider, BasicAWSCredentials}
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
@@ -7,6 +7,10 @@ import com.amazonaws.services.dynamodbv2.model._
 
 import scala.collection.JavaConverters._
 
+/**
+  * Required object to provide AWS client in scala. Boilerplate provided as a part of Scanamo library
+  * Only Keys & DynamoDB instance configurations modified.
+  */
 object LocalDynamoDB {
   def client(): AmazonDynamoDBAsync =
     AmazonDynamoDBAsyncClient.asyncBuilder()
