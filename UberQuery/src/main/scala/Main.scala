@@ -1,6 +1,6 @@
 
 import UberJavaConnector.UberRideEstimator
-import UberScalaConnector.{CabPrice, UberPriceModel}
+import Models.{CabPrice, UberPriceModel}
 
 import scala.collection.JavaConverters._
 
@@ -11,7 +11,8 @@ object Main extends App{
     case null => Set()
     case _ => ep.getPrices.asScala.toSet.map(p => UberPriceModel(p))
   }
+  prices foreach println
 
-//  DynamoFace.put(prices)
-  println(prices foreach println)
+
+
 }
