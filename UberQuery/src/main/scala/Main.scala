@@ -1,4 +1,5 @@
 
+import DynamoDB.DynamoUberImpl
 import UberJavaConnector.UberRideEstimator
 import Models.{CabPrice, UberPriceModel}
 
@@ -13,6 +14,7 @@ object Main extends App{
   }
   prices foreach println
 
+  DynamoUberImpl.put(prices)
 
 
 }

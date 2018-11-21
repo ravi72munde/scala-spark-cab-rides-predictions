@@ -37,11 +37,4 @@ public class UberRideEstimator {
 
 
 
-    public static void main(String[] args) {
-//        UberConnector.UberRideEstimator estimatorService = UberConnector.UberRideEstimator.generateService();
-//        estimatorService.getPriceEstimates(37.7752315f,-122.418075f,37.7752415f,-122.518075f);
-    }
-
-
-
 }
