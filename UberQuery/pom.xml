@@ -51,7 +51,11 @@
             <artifactId>scanamo-testkit_2.12</artifactId>
             <version>1.0.0-M7</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.snowplowanalytics</groupId>
+            <artifactId>scala-weather_2.12</artifactId>
+            <version>0.4.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>

@@ -4,20 +4,26 @@ import com.uber.sdk.rides.client.model.PriceEstimate
 
 
 /**
-  * Generic Case class for cab prices
+  * Generic Case class representing cab rides
+  * @param cab_type         : Type of the cab(Uber/Lyft)
+  * @param product_id       : Unique ID from API
+  * @param name             : Name of the cab type: UberXL,Pool,Share etc
+  * @param price            : Average price estimate in USD
+  * @param distance         : Distance in miles
+  * @param surge_multiplier : Price Surge Multiplier, 1 if none
+  * @param time_stamp       : Time in epoch when query was made
+  * @param source           : Source of the trip
+  * @param destination      : Destination of the trip
   */
-case class CabPrice(cab_type: String, product_id: String, name: String, price: Option[BigDecimal], distance: Option[Float], surge_multiplier: Float, time_stamp: Long) {
-  // useful to see values in debug
-  override def toString: String = "UberType : " + name + ", Price: " + price + ", Distance: " + distance + ", Surge: " + surge_multiplier
-}
+case class CabPrice(cab_type: String, product_id: String, name: String, price: Option[BigDecimal], distance: Option[Float], surge_multiplier: Float, time_stamp: Long, source:String, destination:String)
 
 
 /**
-  * Cab price trait to convert specific(uber & lyft) to a generic CabPrice Model
+  * Cab price trait to convert specific(Uber & Lyft) to a generic CabPrice Model
   */
 trait CabPriceModel[T] {
   //apply to get generic cab price model
-  def apply(x:T): CabPrice
+  def apply(x:T,s:Location,d:Location): CabPrice
 }
 
 
@@ -27,8 +33,14 @@ trait CabPriceModel[T] {
   */
 object UberPriceModel extends CabPriceModel[PriceEstimate] {
 
-  // convert PriceEstimate to CabPrice
-  override def apply(priceEstimate: PriceEstimate): CabPrice = {
+  /**
+    * Convert PriceEstimate to CabPrice
+    * @param priceEstimate  : Uber JAVA API response type
+    * @param source         : Source of the trip(Location)
+    * @param destination    : Destination of the trip(Location)
+    * @return CabPrice      : The generic cab price case class
+    */
+  override def apply(priceEstimate: PriceEstimate,source:Location,destination:Location): CabPrice = {
 
     //name: Uber,UberXL,Pool etc
     val name = priceEstimate.getDisplayName
@@ -55,7 +67,7 @@ object UberPriceModel extends CabPriceModel[PriceEstimate] {
     }
 
     // Create the generic CabPrice value
-    CabPrice("Uber", product_id, name, price, distance, surge_multiplier, System.currentTimeMillis())
+    CabPrice("Uber", product_id, name, price, distance, surge_multiplier, System.currentTimeMillis(),source.name,destination.name)
 
   }
 

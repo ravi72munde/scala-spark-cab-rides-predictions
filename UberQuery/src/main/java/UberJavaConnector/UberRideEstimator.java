@@ -1,5 +1,6 @@
 package UberJavaConnector;
 
+import Models.Location;
 import com.uber.sdk.core.client.ServerTokenSession;
 import com.uber.sdk.core.client.SessionConfiguration;
 import com.uber.sdk.rides.client.UberRidesApi;
@@ -22,25 +23,20 @@ public class UberRideEstimator {
         rideService = UberRidesApi.with(session).build().createService();
     }
 
-    public static PriceEstimatesResponse getPriceEstimates(float startLattitude,float startLongitude, float endLattitude,float endLongitude ){
+    public static PriceEstimatesResponse getPriceEstimates(Location source,Location destination ){
 
         PriceEstimatesResponse priceEstimate =null;
         try {
-            priceEstimate= rideService.
-                    getPriceEstimates(startLattitude,startLongitude,endLattitude,endLongitude).execute().body();
+            priceEstimate= rideService
+                    .getPriceEstimates(source.latitude(),source.longitude(),destination.latitude(),source.longitude())
+                    .execute()
+                    .body();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return priceEstimate;
     }
 
-
-
-
-    public static void main(String[] args) {
-//        UberConnector.UberRideEstimator estimatorService = UberConnector.UberRideEstimator.generateService();
-//        estimatorService.getPriceEstimates(37.7752315f,-122.418075f,37.7752415f,-122.518075f);
-    }
 
 
 

@@ -16,7 +16,7 @@ trait DynamoTrait[T]{
 /**
   * DynamoDB implementation for pushing cab rides to cloud
   */
-object DynamoCabImpl extends DynamoTrait[CabPrice] {
+object DynamoUberImpl extends DynamoTrait[CabPrice] {
   def put(vs: Set[CabPrice]): Unit ={
     val client = LocalDynamoDB.client()
     implicit val floatAttribute = DynamoFormat.coercedXmap[Float,String,IllegalArgumentException](
@@ -29,6 +29,8 @@ object DynamoCabImpl extends DynamoTrait[CabPrice] {
     Scanamo.exec(client)(operations)
   }
 }
+
+
 
 //object WeatherImpl extends DynamoTrait[T]{
 //  override def put(vs: Set[T]): Unit = ???
