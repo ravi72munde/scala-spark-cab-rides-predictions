@@ -1,6 +1,6 @@
 package DynamoDB
 
-import Models.CabPrice
+import Models.{CabPrice, Weather}
 import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
 
 
@@ -10,6 +10,7 @@ import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
   */
 trait DynamoTrait[T]{
   //interface to put values to DynamoDB
+
   def put(vs:Set[T])
 }
 
@@ -25,6 +26,21 @@ object DynamoUberImpl extends DynamoTrait[CabPrice] {
       _.toString
     )
     val table = Table[CabPrice]("cab_rides")
+    val operations = table.putAll(vs)
+    Scanamo.exec(client)(operations)
+  }
+}
+
+object DynamoWeatherImp extends DynamoTrait[Weather]{
+
+  def put(vs: Set[Weather])={
+    val client = LocalDynamoDB.client()
+    implicit val floatAttribute = DynamoFormat.coercedXmap[Float,String,IllegalArgumentException](
+      _.toFloat
+    )(
+      _.toString
+    )
+    val table = Table[Weather]("weather")
     val operations = table.putAll(vs)
     Scanamo.exec(client)(operations)
   }
