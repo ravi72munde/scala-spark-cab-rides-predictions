@@ -1,7 +1,7 @@
 
 import DynamoDB.{DynamoUberImpl, DynamoWeatherImp}
 import Models.Location
-import RidesAPI.UberAPI
+import Rides.UberAPI
 import Weather.WeatherAPI
 
 
@@ -15,13 +15,16 @@ object Main extends App {
   /*
   Uber Price testing
    */
-//  val prices = UberAPI.getPrices(source, destination)
-//  prices foreach println
-//  DynamoUberImpl.put(prices)
-  /************************************/
+  val prices = UberAPI.getPrices(source, destination)
+  prices foreach println
+  DynamoUberImpl.put(prices)
+  /** **********************************/
 
-//  val weatherInfo = WeatherAPI.getCurrentWeather(source)
-//  DynamoWeatherImp.put(Set(weatherInfo.get))
-//  print (weatherInfo)
+  /*
+  Weather Info testing
+   */
+  val weatherInfo = WeatherAPI.getCurrentWeather(source)
+  DynamoWeatherImp.put(Set(weatherInfo.get))
+  print(weatherInfo)
 
 }

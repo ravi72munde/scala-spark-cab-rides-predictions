@@ -1,53 +1,68 @@
 package DynamoDB
 
 import Models.{CabPrice, Weather}
+import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
 import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
 
-
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
-  *Trait for scala to dynamoDB connection
+  * Trait for scala to dynamoDB connection
   */
-trait DynamoTrait[T]{
-  //interface to put values to DynamoDB
+trait DynamoTrait[T] {
 
-  def put(vs:Set[T])
+  /**
+    * Put set of values into DyanmoDB
+    *
+    * @param vs : Set of values
+    * @return : Future wrapped results
+    */
+  def put(vs: Set[T]): Future[Seq[BatchWriteItemResult]]
 }
 
 /**
   * DynamoDB implementation for pushing cab rides to cloud
   */
 object DynamoUberImpl extends DynamoTrait[CabPrice] {
-  def put(vs: Set[CabPrice]): Unit ={
+
+  /**
+    * Put set of values into DyanmoDB
+    *
+    * @param vs : Set of values
+    * @return : Future wrapped results
+    */
+  def put(vs: Set[CabPrice]): Future[Seq[BatchWriteItemResult]] = {
     val client = LocalDynamoDB.client()
-    implicit val floatAttribute = DynamoFormat.coercedXmap[Float,String,IllegalArgumentException](
-      _.toFloat
-    )(
-      _.toString
-    )
+
+    // float implicit coversion required for DyanmoDB object conversions
+    implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
+
     val table = Table[CabPrice]("cab_rides")
     val operations = table.putAll(vs)
-    Scanamo.exec(client)(operations)
+    Future(Scanamo.exec(client)(operations))
   }
 }
 
-object DynamoWeatherImp extends DynamoTrait[Weather]{
-
-  def put(vs: Set[Weather])={
+/**
+  * Weather specific implementation
+  */
+object DynamoWeatherImp extends DynamoTrait[Weather] {
+  /**
+    * Put set of values into DyanmoDB
+    *
+    * @param vs : Set of values
+    * @return : Future wrapped results
+    */
+  def put(vs: Set[Weather]): Future[Seq[BatchWriteItemResult]] = {
     val client = LocalDynamoDB.client()
-    implicit val floatAttribute = DynamoFormat.coercedXmap[Float,String,IllegalArgumentException](
-      _.toFloat
-    )(
-      _.toString
-    )
+
+    implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
+
     val table = Table[Weather]("weather")
     val operations = table.putAll(vs)
-    Scanamo.exec(client)(operations)
+    Future(Scanamo.exec(client)(operations))
   }
 }
 
 
-
-//object WeatherImpl extends DynamoTrait[T]{
-//  override def put(vs: Set[T]): Unit = ???
-//}

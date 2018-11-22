@@ -9,11 +9,20 @@ import com.uber.sdk.rides.client.services.RidesService;
 
 import java.io.IOException;
 
+/**
+ * Java class for getting data from UBER API
+ */
 public class UberRideEstimator {
-    private static RidesService rideService;
-    private static final UberRideEstimator serviceInstance = new UberRideEstimator();
 
-    private UberRideEstimator(){
+    private static RidesService rideService;
+    private static final UberRideEstimator serviceInstance = new UberRideEstimator(); //final singleton variable
+
+
+    /**
+     * Create a session config for Uber and service for getting estimates
+     * Singleton Implementation
+     */
+    private UberRideEstimator() {
         SessionConfiguration config = new SessionConfiguration.Builder()
                 .setClientId(System.getenv("uber_clientId"))
                 .setServerToken(System.getenv("uber_token"))
@@ -23,12 +32,17 @@ public class UberRideEstimator {
         rideService = UberRidesApi.with(session).build().createService();
     }
 
-    public static PriceEstimatesResponse getPriceEstimates(Location source,Location destination ){
+    /**
+     * @param source      : ride start point
+     * @param destination : ride end point
+     * @return            : estimates
+     */
+    public static PriceEstimatesResponse getPriceEstimates(Location source, Location destination) {
 
-        PriceEstimatesResponse priceEstimate =null;
+        PriceEstimatesResponse priceEstimate = null;
         try {
-            priceEstimate= rideService
-                    .getPriceEstimates(source.latitude(),source.longitude(),destination.latitude(),source.longitude())
+            priceEstimate = rideService
+                    .getPriceEstimates(source.latitude(), source.longitude(), destination.latitude(), source.longitude())
                     .execute()
                     .body();
         } catch (IOException e) {
@@ -36,8 +50,6 @@ public class UberRideEstimator {
         }
         return priceEstimate;
     }
-
-
 
 
 }
