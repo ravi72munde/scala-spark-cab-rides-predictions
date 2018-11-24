@@ -14,7 +14,7 @@ import scala.collection.JavaConverters._
 object LocalDynamoDB {
   def client(): AmazonDynamoDBAsync =
     AmazonDynamoDBAsyncClient.asyncBuilder()
-      .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY_ID"),System.getenv("AWS_SECRET_ACCESS_KEY"))))
+      .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY_ID"), System.getenv("AWS_SECRET_ACCESS_KEY"))))
       .withEndpointConfiguration(new EndpointConfiguration("dynamodb.us-east-1.amazonaws.com", "us-east-1"))
       .build()
 
@@ -26,6 +26,7 @@ object LocalDynamoDB {
       arbitraryThroughputThatIsIgnoredByDynamoDBLocal
     )
   }
+
   def usingRandomTable[T](client: AmazonDynamoDB)(attributeDefinitions: (Symbol, ScalarAttributeType)*)(
     thunk: String => T
   ): Unit = {
@@ -106,11 +107,11 @@ object LocalDynamoDB {
   private def keySchema(attributes: Seq[(Symbol, ScalarAttributeType)]) = {
     val hashKeyWithType :: rangeKeyWithType = attributes.toList
     val keySchemas = hashKeyWithType._1 -> KeyType.HASH :: rangeKeyWithType.map(_._1 -> KeyType.RANGE)
-    keySchemas.map{ case (symbol, keyType) => new KeySchemaElement(symbol.name, keyType)}.asJava
+    keySchemas.map { case (symbol, keyType) => new KeySchemaElement(symbol.name, keyType) }.asJava
   }
 
   private def attributeDefinitions(attributes: Seq[(Symbol, ScalarAttributeType)]) = {
-    attributes.map{ case (symbol, attributeType) => new AttributeDefinition(symbol.name, attributeType)}.asJava
+    attributes.map { case (symbol, attributeType) => new AttributeDefinition(symbol.name, attributeType) }.asJava
   }
 
   private val arbitraryThroughputThatIsIgnoredByDynamoDBLocal = new ProvisionedThroughput(1L, 1L)

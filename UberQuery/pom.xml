@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ravi.uber</groupId>
+    <groupId>com.cab-price.predictor</groupId>
     <artifactId>connector</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -56,6 +56,20 @@
             <artifactId>scala-weather_2.12</artifactId>
             <version>0.4.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.12</artifactId>
+            <version>3.2.0-SNAP10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <repositories>
