@@ -1,30 +1,39 @@
 
 import DynamoDB.{DynamoUberImpl, DynamoWeatherImp}
-import Models.Location
+import Models.{Location, LocationRepository, Weather}
 import Rides.UberAPI
-import Weather.WeatherAPI
+import _root_.Weather.WeatherAPI
+import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 /**
   * Work in progress
   */
 object Main extends App {
-  val source: Location = Location("cab-test", 42.349867f, -71.077356f)
-  val destination: Location = Location("cab-test2", 42.340064f, -71.089784f)
+  //  val source: Location =
+  //  val destination: Location = Location("cab-test2", 42.340064f, -71.089784f)
 
-  /*
-  Uber Price testing
-   */
-  val prices = UberAPI.getPrices(source, destination)
-  prices foreach println
-  DynamoUberImpl.put(prices)
-  /** **********************************/
+  //  /*
+  //  Uber Price testing
+  //   */
+  //  val prices = UberAPI.getPrices(source, destination)
+  //  prices foreach println
+  //  DynamoUberImpl.put(prices)
+  //  /** **********************************/
+  //
+  //  /*
+  //  Weather Info testing
+  //   */
+  //  val getWeather: Location=>Option[Weather] = (x:Location) => WeatherAPI.getCurrentWeather(x)
+  //
+  //  val result: Seq[Weather] = ls.map(getWeather andThen(w=>w.get))
+  //  val futureResult: Future[Seq[BatchWriteItemResult]] = DynamoWeatherImp.put(result.toSet)
+  //  Await.result(futureResult,Duration.apply(10,"sec"))
+  //  futureResult.onComplete(println)
 
-  /*
-  Weather Info testing
-   */
-  val weatherInfo = WeatherAPI.getCurrentWeather(source)
-  DynamoWeatherImp.put(Set(weatherInfo.get))
-  print(weatherInfo)
-
+  val repository = LocationRepository.getPairedLocations
+  repository foreach println
 }
