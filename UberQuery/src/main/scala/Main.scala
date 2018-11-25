@@ -44,7 +44,7 @@ object Main extends App {
     "master")
   val locations = LocationRepository.sourceSeq ++ LocationRepository.destinationSeq
 
-  master ! locations
+//  master ! locations
   master ! LocationsTuples(getPairedLocations)
 
 

@@ -22,8 +22,8 @@ class DynamoActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case weatherInfo: WeatherBatch => {
-      putWeatherInfo(weatherInfo);
-      context.stop(self)
+      putWeatherInfo(weatherInfo)
+      context.stop(sender())
     }
     case cabPrices: CabPriceBatch => {
       println("received "+cabPrices)
