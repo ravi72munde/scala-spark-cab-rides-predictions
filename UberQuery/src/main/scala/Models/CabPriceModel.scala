@@ -17,7 +17,7 @@ import com.uber.sdk.rides.client.model.PriceEstimate
   * @param destination      : Destination of the trip
   */
 case class CabPrice(cab_type: String, product_id: String, name: String, price: Option[BigDecimal], distance: Option[Float], surge_multiplier: Float, time_stamp: Long, source: String, destination: String)
-
+case class CabPriceBatch(cabPrices: Set[CabPrice]) {}
 
 /**
   * Cab price trait to convert specific(Uber & Lyft) to a generic CabPrice Model

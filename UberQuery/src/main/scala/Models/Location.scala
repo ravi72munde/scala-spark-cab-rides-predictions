@@ -9,7 +9,8 @@ package Models
   *
   */
 case class Location(name: String, latitude: Float, longitude: Float)
-
+case class LocationBatch(locations:Seq[Location])
+case class LocationsTuples(lts:Seq[(Location,Location)])
 
 /**
   * Location Repository for busy locations in Boston City
