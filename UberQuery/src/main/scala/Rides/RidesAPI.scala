@@ -32,7 +32,7 @@ object UberAPI extends RidesAPI {
 
 
     val priceSet: Option[Set[PriceEstimate]] = try {
-      val ep = UberRideEstimator.getPriceEstimates(source, destination)
+      val ep = UberRideEstimator.getPriceEstimates(source.latitude,source.longitude, destination.latitude,destination.longitude)
       Some(ep.getPrices.asScala.toSet)
     } catch {
       case e: Exception => println(e.getMessage);None
