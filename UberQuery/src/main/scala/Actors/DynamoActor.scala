@@ -34,8 +34,11 @@ class DynamoActor extends Actor with ActorLogging {
     */
   def putCabPrices(cabPriceBatch: CabPriceBatch): Unit = {
 
-    val result = UberCabImpl.put(cabPriceBatch.cabPrices.toSeq)
-    Await.result(result, Duration.Inf)
+    val result: Future[Seq[BatchWriteItemResult]] = UberCabImpl.put(cabPriceBatch.cabPrices.toSeq)
+    result onComplete {
+      case Success(_) => log.info("Cab Prices Batch processed on DynamoDB")
+      case Failure(exception) => log.error("error process Cab Prices batch on dynamoDB :" + exception.getMessage)
+    }
   }
 
   override def receive: Receive = {
