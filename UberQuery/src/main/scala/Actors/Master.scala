@@ -2,19 +2,21 @@ package Actors
 
 import Models._
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import akka.pattern.ask
+import akka.pattern.{ask, pipe}
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
-import akka.pattern.pipe
+
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
 /**
   * Master Actor to supervise other actors
+  *
   * @param nrofWeatherWorkers: Number of weather workers requested
   * @param nrofUberWorkers   : Number of Uber workers requested
   * @param nrofDynamoWorkers : Number of DynamoDB workers requested
   */
+//noinspection ScalaDocParserErrorInspection
 class Master(nrofWeatherWorkers: Int, nrofUberWorkers: Int, nrofDynamoWorkers: Int) extends Actor with ActorLogging {
 
   log.info("Master Actor started")
@@ -36,14 +38,14 @@ class Master(nrofWeatherWorkers: Int, nrofUberWorkers: Int, nrofDynamoWorkers: I
   import context.dispatcher
 
   /**
-    * function to transform Seq[Set[CabPrice]] to CabPriceBatch
+    * function to transform 'Seq[Set[CabPrice]]' to CabPriceBatch
     */
   def processCabPrices: Seq[Set[CabPrice]] => CabPriceBatch = {
     sc: Seq[Set[CabPrice]] => CabPriceBatch(sc.flatten.toSet)
   }
 
   /**
-    * function to transform Seq[Some[Weather]] to WeatherBatch
+    * function to transform 'Seq[Some[Weather]]' to WeatherBatch
     */
   def processWeather: Seq[Some[Weather]] => WeatherBatch = {
     sw: Seq[Some[Weather]] => WeatherBatch(sw.flatten)

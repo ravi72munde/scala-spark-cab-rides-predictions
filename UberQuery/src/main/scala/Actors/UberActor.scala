@@ -4,6 +4,7 @@ import Models.{CabPrice, Location}
 import Rides.UberAPI
 import akka.actor.{Actor, ActorLogging}
 import akka.pattern.pipe
+
 import scala.concurrent.Future
 
 /**

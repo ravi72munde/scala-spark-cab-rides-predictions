@@ -2,7 +2,7 @@ package Actors
 
 import DynamoDB.{DynamoWeatherImp, UberCabImpl}
 import Models.{CabPriceBatch, WeatherBatch}
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Status}
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
 
 import scala.concurrent.Future
@@ -27,7 +27,12 @@ class DynamoActor extends Actor with ActorLogging {
 
   }
 
-  def putCabPrices(cabPriceBatch: CabPriceBatch) = {
+  /**
+    * Put the records to dynamodb
+    *
+    * @param cabPriceBatch batch of cab prices
+    */
+  def putCabPrices(cabPriceBatch: CabPriceBatch): Unit = {
 
     val result: Future[Seq[BatchWriteItemResult]] = UberCabImpl.put(cabPriceBatch.cabPrices.toSeq)
     result onComplete {
@@ -38,17 +43,16 @@ class DynamoActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
+    // put all weather information(batch) to DynamoDB
+    case weatherInfo: WeatherBatch => putWeatherInfo(weatherInfo)
 
-    case weatherInfo: WeatherBatch => {
-      // put all weather information(batch) to DynamoDB
-      putWeatherInfo(weatherInfo)
-    }
-    case cabPrices: CabPriceBatch => {
-      //put all cab prices to DynamoDB
-      putCabPrices(cabPrices)
-    }
+    //put all cab prices to DynamoDB
+    case cabPrices: CabPriceBatch => putCabPrices(cabPrices)
 
-    case q => log.warning(s"received unknown message type: ${q}")
+    //log errors
+    case Status.Failure(v) => log.error(v.getMessage)
+
+    case q => log.warning(s"received unknown message type: $q")
 
   }
 }
