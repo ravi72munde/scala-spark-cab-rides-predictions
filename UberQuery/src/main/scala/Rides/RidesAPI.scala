@@ -2,10 +2,9 @@ package Rides
 
 import Models.{CabPrice, Location, UberPriceModel}
 import UberJavaConnector.UberRideEstimator
-import com.uber.sdk.rides.client.model.{PriceEstimate, PriceEstimatesResponse}
-import scala.concurrent.ExecutionContext.Implicits.global
+import com.uber.sdk.rides.client.model.PriceEstimate
+
 import scala.collection.JavaConverters._
-import scala.concurrent.Future
 
 /**
   * Trait to model cab prices

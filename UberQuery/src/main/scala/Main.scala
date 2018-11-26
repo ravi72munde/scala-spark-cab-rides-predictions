@@ -1,16 +1,11 @@
 
 import Actors.Master
-import DynamoDB.{DynamoWeatherImp, UberCabImpl}
+import Models.LocationRepository.getPairedLocations
 import Models._
-import Rides.UberAPI
-import _root_.Weather.WeatherAPI
 import akka.actor.{ActorSystem, Props}
-import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
-
+import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-import LocationRepository.getPairedLocations
+
 /**
   * Work in progress
   */
@@ -37,16 +32,19 @@ object Main extends App {
   //
   //  Await.result(futureResult, Duration.Inf)
   //  Await.ready(cabPriceResult, Duration.Inf)
-  val system = ActorSystem("CabRideSystem")
 
-  val master = system.actorOf(Props(new Master(
-    2, 2, 2)),
-    "master")
+
+  val system = ActorSystem("CabRideSystem")
   val locations = LocationRepository.sourceSeq ++ LocationRepository.destinationSeq
 
-//  master ! locations
-  master ! LocationsTuples(getPairedLocations)
+  val master = system.actorOf(Props(new Master(nrofWeatherWorkers = locations.size, nrofUberWorkers = locations.size / 2, 2)),
+    "master")
+  system.scheduler.schedule(0 seconds, 5 minutes)(
+    master ! locations
+  )
 
-
+  system.scheduler.schedule(0 seconds, 1 minute)(
+    master ! LocationsTuples(getPairedLocations)
+  )
 
 }

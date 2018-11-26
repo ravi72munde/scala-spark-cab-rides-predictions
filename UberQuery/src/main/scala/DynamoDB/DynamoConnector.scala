@@ -2,10 +2,10 @@ package DynamoDB
 
 import Models.{CabPrice, Weather}
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
-import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
+import com.gu.scanamo.{DynamoFormat, ScanamoAsync, Table}
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * Trait for scala to dynamoDB connection
@@ -40,7 +40,7 @@ object UberCabImpl extends DynamoTrait[CabPrice] {
 
     val table = Table[CabPrice]("cab_rides")
     val operations = table.putAll(vs.toSet)
-    Future(Scanamo.exec(client)(operations))
+    ScanamoAsync.exec(client)(operations)
   }
 }
 
@@ -61,7 +61,7 @@ object DynamoWeatherImp extends DynamoTrait[Weather] {
 
     val table = Table[Weather]("weather")
     val operations = table.putAll(vs.toSet)
-    Future(Scanamo.exec(client)(operations))
+    ScanamoAsync.exec(client)(operations)
   }
 }
 
