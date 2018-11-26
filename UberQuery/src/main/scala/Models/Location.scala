@@ -38,6 +38,9 @@ object LocationRepository {
   //Sequence of 2nd set of locations.
   val destinationSeq: Seq[Location] = Seq(finDistrict, westEnd, beaconHill, theatreDist, backBay, northStation)
 
+  // Sequence of all the locations
+  val locations = sourceSeq ++ destinationSeq
+
   /**
     * creates a random pair of source and destination with a reverse ride
     *
@@ -53,6 +56,8 @@ object LocationRepository {
     //append swapped tuple to the sequence of locations
     randomPair ++ randomPair.map(x => (x.swap))
   }
+
+
 
 
 }
