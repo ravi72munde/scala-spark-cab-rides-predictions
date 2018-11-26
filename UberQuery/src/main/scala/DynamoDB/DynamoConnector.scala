@@ -2,10 +2,10 @@ package DynamoDB
 
 import Models.{CabPrice, Weather}
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
-import com.gu.scanamo.{DynamoFormat, Scanamo, Table}
+import com.gu.scanamo.{DynamoFormat, ScanamoAsync, Table}
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * Trait for scala to dynamoDB connection
@@ -18,13 +18,13 @@ trait DynamoTrait[T] {
     * @param vs : Set of values
     * @return : Future wrapped results
     */
-  def put(vs: Set[T]): Future[Seq[BatchWriteItemResult]]
+  def put(vs: Seq[T]): Future[Seq[BatchWriteItemResult]]
 }
 
 /**
   * DynamoDB implementation for pushing cab rides to cloud
   */
-object DynamoUberImpl extends DynamoTrait[CabPrice] {
+object UberCabImpl extends DynamoTrait[CabPrice] {
 
   /**
     * Put set of values into DyanmoDB
@@ -32,15 +32,15 @@ object DynamoUberImpl extends DynamoTrait[CabPrice] {
     * @param vs : Set of values
     * @return : Future wrapped results
     */
-  def put(vs: Set[CabPrice]): Future[Seq[BatchWriteItemResult]] = {
+  def put(vs: Seq[CabPrice]): Future[Seq[BatchWriteItemResult]] = {
     val client = LocalDynamoDB.client()
 
     // float implicit coversion required for DyanmoDB object conversions
     implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
 
     val table = Table[CabPrice]("cab_rides")
-    val operations = table.putAll(vs)
-    Future(Scanamo.exec(client)(operations))
+    val operations = table.putAll(vs.toSet)
+    ScanamoAsync.exec(client)(operations)
   }
 }
 
@@ -54,14 +54,14 @@ object DynamoWeatherImp extends DynamoTrait[Weather] {
     * @param vs : Set of values
     * @return : Future wrapped results
     */
-  def put(vs: Set[Weather]): Future[Seq[BatchWriteItemResult]] = {
+  def put(vs: Seq[Weather]): Future[Seq[BatchWriteItemResult]] = {
     val client = LocalDynamoDB.client()
 
     implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
 
     val table = Table[Weather]("weather")
-    val operations = table.putAll(vs)
-    Future(Scanamo.exec(client)(operations))
+    val operations = table.putAll(vs.toSet)
+    ScanamoAsync.exec(client)(operations)
   }
 }
 

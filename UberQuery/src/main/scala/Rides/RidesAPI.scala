@@ -2,18 +2,17 @@ package Rides
 
 import Models.{CabPrice, Location, UberPriceModel}
 import UberJavaConnector.UberRideEstimator
-import com.uber.sdk.rides.client.model.{PriceEstimate, PriceEstimatesResponse}
-import scala.concurrent.ExecutionContext.Implicits.global
+import com.uber.sdk.rides.client.model.PriceEstimate
+
 import scala.collection.JavaConverters._
-import scala.concurrent.Future
 
 /**
   * Trait to model cab prices
   */
 trait RidesAPI {
   /**
-    * @param source
-    * @param destination
+    * @param source location of the trip
+    * @param destination location of the trip
     * @return set[SabPrices]
     */
   def getPrices(source: Location, destination: Location): Set[CabPrice]
@@ -25,8 +24,8 @@ trait RidesAPI {
 object UberAPI extends RidesAPI {
 
   /**
-    * @param source
-    * @param destination
+    * @param source location of the trip
+    * @param destination location of the trip
     * @return set[SabPrices]
     */
   override def getPrices(source: Location, destination: Location): Set[CabPrice] = {
@@ -36,9 +35,10 @@ object UberAPI extends RidesAPI {
       val ep = UberRideEstimator.getPriceEstimates(source, destination)
       Some(ep.getPrices.asScala.toSet)
     } catch {
-      case e: Exception => None
+      case e: Exception => println(e.getMessage);None
     }
 
+    // in case of failure just send blank set to avoid failures
     priceSet match {
       case ps: Some[Set[PriceEstimate]] => ps.get.map(p => UberPriceModel(p, source, destination))
       case _ => Set()
@@ -52,8 +52,8 @@ object UberAPI extends RidesAPI {
 
   object LyftAPI extends RidesAPI {
     /**
-      * @param source
-      * @param destination
+      * @param source location of the trip
+      * @param destination location of the trip
       * @return set[SabPrices]
       */
     override def getPrices(source: Location, destination: Location): Set[CabPrice] = ???

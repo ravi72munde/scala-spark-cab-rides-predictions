@@ -9,7 +9,8 @@ package Models
   *
   */
 case class Location(name: String, latitude: Float, longitude: Float)
-
+case class LocationBatch(locations:Seq[Location])
+case class LocationsTuples(lts:Seq[(Location,Location)])
 
 /**
   * Location Repository for busy locations in Boston City
@@ -44,8 +45,9 @@ object LocationRepository {
     */
   def getPairedLocations: Seq[(Location, Location)] = {
     import java.util.Random
-    val rand = new Random(200) //seed
-    // create a tuple of (source,destination)
+    //randomize paring every time it's called so set new seed every time
+    val rand = new Random(System.currentTimeMillis())
+    // create a tuple of (source,destination); lazy to re-evaluate every time
     val randomPair: Seq[(Location, Location)] = sourceSeq.map(s => (s, destinationSeq(rand.nextInt(sourceSeq.length))))
 
     //append swapped tuple to the sequence of locations

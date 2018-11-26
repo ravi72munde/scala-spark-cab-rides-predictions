@@ -17,7 +17,7 @@ import com.snowplowanalytics.weather.providers.darksky.Responses
   */
 case class Weather(location: String, temp: Option[Float], humidity: Option[Float], pressure: Option[Float],
                    clouds: Option[Float], rain: Option[Float], snow: Option[Float], wind: Option[Float], time_stamp: Long)
-
+case class WeatherBatch(weathers: Seq[Weather])
 
 /**
   * Weather model trait
