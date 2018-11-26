@@ -1,5 +1,7 @@
 package Models
 
+import java.util.UUID
+
 import com.uber.sdk.rides.client.model.PriceEstimate
 
 
@@ -16,7 +18,7 @@ import com.uber.sdk.rides.client.model.PriceEstimate
   * @param source           : Source of the trip
   * @param destination      : Destination of the trip
   */
-case class CabPrice(cab_type: String, product_id: String, name: String, price: Option[BigDecimal], distance: Option[Float], surge_multiplier: Float, time_stamp: Long, source: String, destination: String)
+case class CabPrice(cab_type: String, product_id: String, name: String, price: Option[BigDecimal], distance: Option[Float], surge_multiplier: Float, time_stamp: Long, source: String, destination: String,id:String)
 case class CabPriceBatch(cabPrices: Set[CabPrice]) {}
 
 /**
@@ -74,9 +76,11 @@ object UberPriceModel extends CabPriceModel[PriceEstimate] {
       case b: java.lang.Float => b.floatValue()
       case _ => 1f
     }
+    val time_stamp = System.currentTimeMillis()
+    val id :String = UUID.randomUUID().toString
 
     // Create the generic CabPrice value
-    CabPrice("Uber", product_id, name, price, distance, surge_multiplier, System.currentTimeMillis(), source.name, destination.name)
+    CabPrice("Uber", product_id, name, price, distance, surge_multiplier, time_stamp, source.name, destination.name,id)
 
   }
 
