@@ -3,8 +3,9 @@ import Actors.Master
 import Models.LocationRepository.getPairedLocations
 import Models._
 import akka.actor.{ActorSystem, Props}
-import scala.concurrent.duration._
+
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 /**
   * Work in progress
