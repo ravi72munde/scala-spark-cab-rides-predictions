@@ -12,39 +12,23 @@ import scala.concurrent.duration._
   */
 object Main extends App {
 
-
-  //  /*
-  //  Uber Price testing
-  //   */
-  //  val prices: Set[CabPrice] = {
-  //    LocationRepository.getPairedLocations.flatMap(l => UberAPI.getPrices(l._1, l._2)).toSet
-  //  }
-  //  val cabPriceResult: Future[Seq[BatchWriteItemResult]] = UberCabImpl.put(prices)
-  //
-  //  /** **********************************/
-  //
-  //  /*
-  //  Weather Info testing
-  //   */
-  //  val getWeather: Location => Option[Weather] = (x: Location) => WeatherAPI.getCurrentWeather(x)
-  //  val locations = LocationRepository.sourceSeq ++ LocationRepository.destinationSeq
-  //  val result: Seq[Weather] = locations.flatMap(l=>getWeather(l))
-  //  val futureResult: Future[Seq[BatchWriteItemResult]] = DynamoWeatherImp.put(result.toSet)
-  //
-  //  Await.result(futureResult, Duration.Inf)
-  //  Await.ready(cabPriceResult, Duration.Inf)
-
-
+  /*Actor System for the project*/
   val system = ActorSystem("CabRideSystem")
-  val locations = LocationRepository.sourceSeq ++ LocationRepository.destinationSeq
 
+  /*All locations from repository*/
+  val locations = LocationRepository.locations
+
+  /*Set up master actor for supervising all workers*/
   val master = system.actorOf(Props(new Master(nrofWeatherWorkers = locations.size, nrofUberWorkers = locations.size / 2, 2)),
     "master")
-  system.scheduler.schedule(0 seconds, 5 minutes)(
+
+  /*Schedule Weather Job with specified interval*/
+  system.scheduler.schedule(0 seconds, 30 minutes)(
     master ! locations
   )
 
-  system.scheduler.schedule(0 seconds, 1 minute)(
+  /*Schedule Cab Price Estimator Job with specified interval*/
+  system.scheduler.schedule(0 seconds, 3 minute)(
     master ! LocationsTuples(getPairedLocations)
   )
 
