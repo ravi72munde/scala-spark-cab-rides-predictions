@@ -28,6 +28,13 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.uber.sdk/uber-rides -->
         <dependency>
             <groupId>com.uber.sdk</groupId>
