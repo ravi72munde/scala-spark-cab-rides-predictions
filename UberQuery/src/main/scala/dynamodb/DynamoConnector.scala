@@ -1,6 +1,6 @@
-package DynamoDB
+package dynamodb
 
-import Models.{CabPrice, Weather}
+import models.{CabPrice, Weather}
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
 import com.gu.scanamo.{DynamoFormat, ScanamoAsync, Table}
 
@@ -13,7 +13,7 @@ import scala.concurrent.Future
 trait DynamoTrait[T] {
 
   /**
-    * Put set of values into DyanmoDB
+    * Put set of values into DynamoDB
     *
     * @param vs : Set of values
     * @return : Future wrapped results
@@ -27,7 +27,7 @@ trait DynamoTrait[T] {
 object UberCabImpl extends DynamoTrait[CabPrice] {
 
   /**
-    * Put set of values into DyanmoDB
+    * Put set of values into DynamoDB
     *
     * @param vs : Set of values
     * @return : Future wrapped results
@@ -35,7 +35,7 @@ object UberCabImpl extends DynamoTrait[CabPrice] {
   def put(vs: Seq[CabPrice]): Future[Seq[BatchWriteItemResult]] = {
     val client = LocalDynamoDB.client()
 
-    // float implicit coversion required for DyanmoDB object conversions
+    // float implicit conversion required for DynamoDB object conversions
     implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
 
     val table = Table[CabPrice]("cab_rides")
@@ -49,7 +49,7 @@ object UberCabImpl extends DynamoTrait[CabPrice] {
   */
 object DynamoWeatherImp extends DynamoTrait[Weather] {
   /**
-    * Put set of values into DyanmoDB
+    * Put set of values into DynamoDB
     *
     * @param vs : Set of values
     * @return : Future wrapped results

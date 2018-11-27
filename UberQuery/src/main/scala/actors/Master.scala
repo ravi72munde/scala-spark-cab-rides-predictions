@@ -1,6 +1,6 @@
-package Actors
+package actors
 
-import Models._
+import models._
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.pattern.{ask, pipe}
 import akka.routing.RoundRobinPool
@@ -12,27 +12,27 @@ import scala.concurrent.duration._
 /**
   * Master Actor to supervise other actors
   *
-  * @param nrofWeatherWorkers: Number of weather workers requested
-  * @param nrofUberWorkers   : Number of Uber workers requested
-  * @param nrofDynamoWorkers : Number of DynamoDB workers requested
+  * @param numWeatherWorkers: Number of weather workers requested
+  * @param numUberWorkers   : Number of Uber workers requested
+  * @param numDynamoWorkers : Number of DynamoDB workers requested
   */
-//noinspection ScalaDocParserErrorInspection
-class Master(nrofWeatherWorkers: Int, nrofUberWorkers: Int, nrofDynamoWorkers: Int) extends Actor with ActorLogging {
+//noinspection ScalaDocParserErrorInspection,RedundantBlock,RedundantBlock
+class Master(numWeatherWorkers: Int, numUberWorkers: Int, numDynamoWorkers: Int) extends Actor with ActorLogging {
 
   log.info("Master Actor started")
 
   val weatherWorkerRouter: ActorRef = context.actorOf(
-    Props[WeatherActor].withRouter(RoundRobinPool(nrofWeatherWorkers)), name = "weatherWorkerPool")
-  log.info("WeatherActor started with no. of workers = " + nrofWeatherWorkers)
+    Props[WeatherActor].withRouter(RoundRobinPool(numWeatherWorkers)), name = "weatherWorkerPool")
+  log.info("WeatherActor started with no. of workers = " + numWeatherWorkers)
 
   val uberWorkerRouter: ActorRef = context.actorOf(
-    Props[UberActor].withRouter(RoundRobinPool(nrofUberWorkers)), name = "uberWorkerPool")
-  log.info("UberWorker started with no. of workers = " + nrofUberWorkers)
+    Props[CabPriceActor].withRouter(RoundRobinPool(numUberWorkers)), name = "uberWorkerPool")
+  log.info("UberWorker started with no. of workers = " + numUberWorkers)
 
   val dynamoRouter: ActorRef = context.actorOf(
-    Props[DynamoActor].withRouter(RoundRobinPool(nrofDynamoWorkers)),
+    Props[DynamoActor].withRouter(RoundRobinPool(numDynamoWorkers)),
     name = "dynamoWorkerPool")
-  log.info("DynamoWorker started with no. of workers = " + nrofDynamoWorkers)
+  log.info("DynamoWorker started with no. of workers = " + numDynamoWorkers)
 
   implicit val timeout: Timeout = 2.minutes //timeout for response from workers
   import context.dispatcher
@@ -64,7 +64,8 @@ class Master(nrofWeatherWorkers: Int, nrofUberWorkers: Int, nrofDynamoWorkers: I
     }
 
     // Process tuple of locations to retrieve weather info. Once all weather workers are done processing, pipe the data to Dynamo Worker
-    case locationsBatch: Seq[Location] => {
+    case locationsBatch: Seq[Location] => //noinspection RedundantBlock
+    {
       // wait for all the workers to send data and then process
       val weatherBatchResult = Future.sequence(locationsBatch.map(weatherWorkerRouter ? _).map(_.mapTo[Some[Weather]])).map(processWeather)
 

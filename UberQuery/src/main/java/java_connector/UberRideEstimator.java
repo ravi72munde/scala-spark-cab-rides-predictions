@@ -1,4 +1,4 @@
-package UberJavaConnector;
+package java_connector;
 
 import com.uber.sdk.core.client.ServerTokenSession;
 import com.uber.sdk.core.client.SessionConfiguration;
@@ -37,7 +37,7 @@ public class UberRideEstimator {
      * @param startLongitude of the source
      * @param endLatitude of the destination
      * @param endLongitude of the destination
-     * @return
+     * @return estimated price response from Uber API
      */
     public static PriceEstimatesResponse getPriceEstimates(float startLatitude, float startLongitude, float endLatitude,float endLongitude) {
 

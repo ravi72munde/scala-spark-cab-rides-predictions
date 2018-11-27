@@ -1,7 +1,7 @@
-package Actors
+package actors
 
-import DynamoDB.{DynamoWeatherImp, UberCabImpl}
-import Models.{CabPriceBatch, WeatherBatch}
+import dynamodb.{DynamoWeatherImp, UberCabImpl}
+import models.{CabPriceBatch, WeatherBatch}
 import akka.actor.{Actor, ActorLogging, Status}
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
 
@@ -22,7 +22,7 @@ class DynamoActor extends Actor with ActorLogging {
 
     result onComplete {
       case Success(_) => log.info("Weather Batch processed on DynamoDB")
-      case Failure(exception) => log.error("error process weather batch on dynamoDB :" + exception.getMessage)
+      case Failure(exception) => log.error("error process weather batch on dynamoDB :" + exception.getStackTrace.map(s=>s.toString))
     }
 
   }
@@ -37,7 +37,7 @@ class DynamoActor extends Actor with ActorLogging {
     val result: Future[Seq[BatchWriteItemResult]] = UberCabImpl.put(cabPriceBatch.cabPrices.toSeq)
     result onComplete {
       case Success(_) => log.info("Cab Prices Batch processed on DynamoDB")
-      case Failure(exception) => log.error("error process Cab Prices batch on dynamoDB :" + exception.getMessage)
+      case Failure(exception) => log.error("error process Cab Prices batch on dynamoDB :" + exception.getStackTrace.map(s=>s.toString))
     }
   }
 
@@ -52,7 +52,7 @@ class DynamoActor extends Actor with ActorLogging {
     //log errors
     case Status.Failure(v) => log.error(v.getMessage)
 
-    case q => log.warning(s"received unknown message type: $q")
+    case q => log.warning(s"received unknown message type: ${q.getClass}")
 
   }
 }
