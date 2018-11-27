@@ -1,16 +1,25 @@
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.lyft.networking.apiObjects.CostEstimate;
 import com.lyft.networking.apiObjects.CostEstimateResponse;
 import java_connector.LyftRideEstimator;
 import java_connector.UberRideEstimator;
+import org.junit.Before;
 import org.junit.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 
-public class LyftRideEstimatorTest {
-///estimates/price
+public class LyftRideEstimatorTest extends WireMockTest{
+
+    @Before
+    public  void setup(){
+        WireMockServer wm = new WireMockServer(options().port(2345));
+        stubFor(get(urlMatching("/v1/cost"))
+                .willReturn(aResponse().withBodyFile("lyft_estimate.json")));
+    }
     @Test
     public void testLyftResponse(){
 
@@ -29,7 +38,7 @@ public class LyftRideEstimatorTest {
         float endLatitude = 0f;
         float endLongitude = 0f;
         CostEstimateResponse result = LyftRideEstimator.getPriceEstimates(startLatitude,startLongitude,endLatitude,endLongitude);
-        assertEquals(null,result);
+        assertNull(result);
     }
 
 }
