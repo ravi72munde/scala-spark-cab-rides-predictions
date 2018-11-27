@@ -1,4 +1,4 @@
-package Models
+package models
 
 /**
   * Represents physical location
@@ -39,7 +39,7 @@ object LocationRepository {
   val destinationSeq: Seq[Location] = Seq(finDistrict, westEnd, beaconHill, theatreDist, backBay, northStation)
 
   // Sequence of all the locations
-  val locations = sourceSeq ++ destinationSeq
+  val locations: Seq[Location] = sourceSeq ++ destinationSeq
 
   /**
     * creates a random pair of source and destination with a reverse ride
@@ -54,7 +54,7 @@ object LocationRepository {
     val randomPair: Seq[(Location, Location)] = sourceSeq.map(s => (s, destinationSeq(rand.nextInt(sourceSeq.length))))
 
     //append swapped tuple to the sequence of locations
-    randomPair ++ randomPair.map(x => (x.swap))
+    randomPair ++ randomPair.map(x => x.swap)
   }
 
 

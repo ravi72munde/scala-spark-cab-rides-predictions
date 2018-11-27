@@ -1,7 +1,6 @@
-package Weather
+package weather
 
-
-import Models.{Location, Weather, WeatherModel}
+import models.{Location, Weather, WeatherModel}
 import cats.effect.IO
 import com.snowplowanalytics.weather.Errors
 import com.snowplowanalytics.weather.providers.darksky.{BlockType, DarkSky, Responses}

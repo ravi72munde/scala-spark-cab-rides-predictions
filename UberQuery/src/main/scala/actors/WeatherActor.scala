@@ -1,7 +1,7 @@
-package Actors
+package actors
 
-import Models.{Location, Weather}
-import _root_.Weather.WeatherAPI
+import models.{Location, Weather}
+import _root_.weather.WeatherAPI
 import akka.actor.{Actor, ActorLogging}
 import akka.pattern.pipe
 

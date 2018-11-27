@@ -6,7 +6,7 @@
 
     <groupId>com.cab-price.predictor</groupId>
     <artifactId>connector</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
     <name>scala-with-java-maven-and-eclipse</name>
@@ -81,6 +81,18 @@
             <artifactId>akka-slf4j_2.12</artifactId>
             <version>2.5.18</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit -->
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>adapter-rxjava</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lyft</groupId>
+            <artifactId>lyft-android-sdk-networking</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
 
 
 

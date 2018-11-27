@@ -1,7 +1,8 @@
-package Models
+package models
 
 import java.util.UUID
 
+import com.lyft.networking.apiObjects.CostEstimate
 import com.uber.sdk.rides.client.model.PriceEstimate
 
 
@@ -86,20 +87,52 @@ object UberPriceModel extends CabPriceModel[PriceEstimate] {
 
 }
 /////////////////////////////////////////TO DO LYFT API BELOW/////////////////////////////////////////////////////
-/*
+
 /**
   *
   *  Cab price implementation for Lyft prices.
   *  [??] is a java model for Uber prices
   */
-object LyftPriceModel extends CabPriceModel[String]{
+object LyftPriceModel extends CabPriceModel[CostEstimate]{
   /**
     *
-    * @param x : Source Objects from Lyft API
-    * @param s : Source of the trip(Location)
-    * @param d : Destination of the trip(Location)
+    * @param priceEstimate : Source Objects from Lyft API
+    * @param source : Source of the trip(Location)
+    * @param destination : Destination of the trip(Location)
     * @return : CabPrice wrapped estimate
     */
-  override def apply(x: String, s: Location, d: Location): CabPrice = ???
+  override def apply(priceEstimate: CostEstimate, source: Location, destination: Location): CabPrice = {
+    //name: Lyft,Shared, etc
+    val name = priceEstimate.display_name
+
+    // Unique product id from each type of lyft
+    val product_id = priceEstimate.ride_type
+
+    //Average of max and min estimated price, can be null in some cases
+    val price: Option[BigDecimal] = (priceEstimate.estimated_cost_cents_max, priceEstimate.estimated_cost_cents_min) match {
+      case (_, null) | (null, _) => None
+      case (eh: Integer, el: Integer) => Some(BigDecimal(eh+el)/ 200) // cost estimate is in cents so divide by 100 to get in dollars.
+    }
+
+    //Distance between given source and destination
+    val distance: Option[Float] = priceEstimate.estimated_distance_miles match {
+      case f: java.lang.Double => Some(f.floatValue())
+      case _ => None
+    }
+
+    //Price surge multiplier if present, else 1
+    //Lyft gives the value in % of additional amount. Convert it to a multiplier
+    val surge_multiplier: Float = {"""\d+""".r findFirstIn priceEstimate.primetime_percentage match {
+      case b: Option[String] => try{b.get.toFloat/100} catch {case _: Exception=> 1f} //convert % to float
+      case _ => 1f
+    }} + 1 //add 1 to convert % to a multiplier
+
+
+    val time_stamp = System.currentTimeMillis()
+    val id :String = UUID.randomUUID().toString
+    // Create the generic CabPrice value
+
+    CabPrice("Lyft", product_id, name, price, distance, surge_multiplier, time_stamp, source.name, destination.name,id)
+
+  }
 }
-*/
