@@ -16,7 +16,7 @@
         </encoder>
     </appender>
 
-    <logger name="akka" level="DEBUG" />
+    <logger name="akka" level="DEBUG"/>
 
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>

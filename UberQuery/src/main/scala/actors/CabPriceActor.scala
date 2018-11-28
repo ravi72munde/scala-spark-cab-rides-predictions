@@ -1,10 +1,10 @@
 package actors
 
+import akka.actor.{Actor, ActorLogging}
+import akka.pattern.pipe
 import models.{CabPrice, Location}
 import rides.UberAPI
 import rides.UberAPI.LyftAPI
-import akka.actor.{Actor, ActorLogging}
-import akka.pattern.pipe
 
 import scala.concurrent.Future
 
@@ -14,6 +14,15 @@ import scala.concurrent.Future
 class CabPriceActor extends Actor with ActorLogging {
 
   import context.dispatcher
+
+  override def receive: PartialFunction[Any, Unit] = {
+
+    //directly pipe the prices data to sender(Master)
+
+    case locations: (Location, Location) => pipe(getPrices(locations)) to sender
+
+    case q => log.warning(s"received unknown message type: ${q.getClass}")
+  }
 
   /**
     * Get price estimates(wrapped in CabPrice) from Uber & Lyft API
@@ -28,15 +37,5 @@ class CabPriceActor extends Actor with ActorLogging {
     } yield uberPrices ++ lyftPrices
 
     prices
-  }
-
-
-  override def receive: PartialFunction[Any, Unit] = {
-
-    //directly pipe the prices data to sender(Master)
-
-    case locations: (Location, Location) => pipe(getPrices(locations)) to sender
-
-    case q => log.warning(s"received unknown message type: ${q.getClass}")
   }
 }

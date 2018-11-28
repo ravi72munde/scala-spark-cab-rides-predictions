@@ -9,8 +9,10 @@ package models
   *
   */
 case class Location(name: String, latitude: Float, longitude: Float)
-case class LocationBatch(locations:Seq[Location])
-case class LocationsTuples(lts:Seq[(Location,Location)])
+
+case class LocationBatch(locations: Seq[Location])
+
+case class LocationsTuples(lts: Seq[(Location, Location)])
 
 /**
   * Location Repository for busy locations in Boston City
@@ -56,8 +58,6 @@ object LocationRepository {
     //append swapped tuple to the sequence of locations
     randomPair ++ randomPair.map(x => x.swap)
   }
-
-
 
 
 }

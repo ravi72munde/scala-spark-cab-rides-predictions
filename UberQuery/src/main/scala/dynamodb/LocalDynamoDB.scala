@@ -12,20 +12,13 @@ import scala.collection.JavaConverters._
   * Only Keys & DynamoDB instance configurations modified.
   */
 object LocalDynamoDB {
+  private val arbitraryThroughputThatIsIgnoredByDynamoDBLocal = new ProvisionedThroughput(1L, 1L)
+
   def client(): AmazonDynamoDBAsync =
     AmazonDynamoDBAsyncClient.asyncBuilder()
       .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY_ID"), System.getenv("AWS_SECRET_ACCESS_KEY"))))
       .withEndpointConfiguration(new EndpointConfiguration("dynamodb.us-east-1.amazonaws.com", "us-east-1"))
       .build()
-
-  def createTable(client: AmazonDynamoDB)(tableName: String)(attributes: (Symbol, ScalarAttributeType)*) = {
-    client.createTable(
-      attributeDefinitions(attributes),
-      tableName,
-      keySchema(attributes),
-      arbitraryThroughputThatIsIgnoredByDynamoDBLocal
-    )
-  }
 
   def usingRandomTable[T](client: AmazonDynamoDB)(attributeDefinitions: (Symbol, ScalarAttributeType)*)(
     thunk: String => T
@@ -58,6 +51,13 @@ object LocalDynamoDB {
     res
   }
 
+  def usingTable[T](client: AmazonDynamoDB)(tableName: String)(attributeDefinitions: (Symbol, ScalarAttributeType)*)(
+    thunk: => T
+  ): Unit = {
+    withTable(client)(tableName)(attributeDefinitions: _*)(thunk)
+    ()
+  }
+
   def withTable[T](client: AmazonDynamoDB)(tableName: String)(attributeDefinitions: (Symbol, ScalarAttributeType)*)(
     thunk: => T
   ): T = {
@@ -71,11 +71,13 @@ object LocalDynamoDB {
     res
   }
 
-  def usingTable[T](client: AmazonDynamoDB)(tableName: String)(attributeDefinitions: (Symbol, ScalarAttributeType)*)(
-    thunk: => T
-  ): Unit = {
-    withTable(client)(tableName)(attributeDefinitions: _*)(thunk)
-    ()
+  def createTable(client: AmazonDynamoDB)(tableName: String)(attributes: (Symbol, ScalarAttributeType)*) = {
+    client.createTable(
+      attributeDefinitions(attributes),
+      tableName,
+      keySchema(attributes),
+      arbitraryThroughputThatIsIgnoredByDynamoDBLocal
+    )
   }
 
   def withTableWithSecondaryIndex[T](client: AmazonDynamoDB)(tableName: String, secondaryIndexName: String)
@@ -113,7 +115,5 @@ object LocalDynamoDB {
   private def attributeDefinitions(attributes: Seq[(Symbol, ScalarAttributeType)]) = {
     attributes.map { case (symbol, attributeType) => new AttributeDefinition(symbol.name, attributeType) }.asJava
   }
-
-  private val arbitraryThroughputThatIsIgnoredByDynamoDBLocal = new ProvisionedThroughput(1L, 1L)
 }
 

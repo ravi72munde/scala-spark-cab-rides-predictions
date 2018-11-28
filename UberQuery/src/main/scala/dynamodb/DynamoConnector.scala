@@ -1,8 +1,8 @@
 package dynamodb
 
-import models.{CabPrice, Weather}
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
 import com.gu.scanamo.{DynamoFormat, ScanamoAsync, Table}
+import models.{CabPrice, Weather}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

@@ -9,6 +9,7 @@ import com.lyft.networking.apis.LyftPublicApi;
 /**
  * Java class for getting data from Lyft API
  */
+@Deprecated
 public class LyftRideEstimator {
     private static final LyftRideEstimator serviceInstance = new LyftRideEstimator();
     private static LyftPublicApi rideService;

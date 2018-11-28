@@ -1,8 +1,8 @@
 
 import actors.Master
+import akka.actor.{ActorSystem, Props}
 import models.LocationRepository.getPairedLocations
 import models._
-import akka.actor.{ActorSystem, Props}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -19,7 +19,7 @@ object Main extends App {
   val locations = LocationRepository.locations
 
   /*Set up master actor for supervising all workers*/
-  val master = system.actorOf(Props(new Master(numWeatherWorkers = locations.size, numUberWorkers = locations.size , 2)),
+  val master = system.actorOf(Props(new Master(numWeatherWorkers = locations.size, numUberWorkers = locations.size, 2)),
     "master")
 
   /*Schedule Weather Job with specified interval*/

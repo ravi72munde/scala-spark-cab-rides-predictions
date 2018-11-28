@@ -1,11 +1,13 @@
 package rides
 
+import com.lyft.networking.apiObjects.CostEstimateResponse
+import com.uber.sdk.rides.client.model.PriceEstimatesResponse
+import java_connector.LyftConnector
 import models.{CabPrice, Location, LyftPriceModel, UberPriceModel}
-import com.lyft.networking.apiObjects.CostEstimate
-import com.uber.sdk.rides.client.model.PriceEstimate
-import java_connector.{LyftRideEstimator, UberRideEstimator}
 
 import scala.collection.JavaConverters._
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 /**
   * Trait to model cab prices
@@ -31,28 +33,27 @@ object UberAPI extends RidesAPI {
     */
   override def getPrices(source: Location, destination: Location): Set[CabPrice] = {
 
+    // future wrapped price estimate from uber api
+    val epf: Future[PriceEstimatesResponse] = UberConnector.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
 
-    val priceSet: Option[Set[PriceEstimate]] = try {
-      val ep = UberRideEstimator.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
-
-      Some(ep.getPrices.asScala.toSet)
-
-    } catch {
-      case e: Exception => println(e.getMessage); None
+    //process data in sync
+    val result = Await.result(epf, 30 seconds)
+    result match {
+      case pe: PriceEstimatesResponse => {
+        pe.getPrices
+          .asScala.map(UberPriceModel(_, source, destination))
+          .toSet
+      }
+      // in case of failure just send blank set to avoid failures
+      case q => println("Failed to fetch uber records" + q); Set()
     }
 
-    // in case of failure just send blank set to avoid failures
-    priceSet match {
-      case ps: Some[Set[PriceEstimate]] => ps.get.map(p => UberPriceModel(p, source, destination))
-      case _ => Set()
-    }
   }
 
 
   /**
     * Lyft Specific implementation
     */
-
   object LyftAPI extends RidesAPI {
     /**
       * @param source      location of the trip
@@ -60,19 +61,23 @@ object UberAPI extends RidesAPI {
       * @return set[SabPrices]
       */
     override def getPrices(source: Location, destination: Location): Set[CabPrice] = {
-      val priceSet: Option[Set[CostEstimate]] = try {
-        val ec = LyftRideEstimator.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
-        Some(ec.cost_estimates.asScala.toSet)
+      // future wrapped price estimate from lyft api
+      val cef: Future[CostEstimateResponse] = LyftConnector.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
+
+      //process data in sync
+      val result = Await.result(cef, 30 seconds)
+      result match {
+        case cer: CostEstimateResponse => {
+          cer.cost_estimates
+            .asScala.map(LyftPriceModel(_, source, destination))
+            .toSet
+        }
+        // in case of failure just send blank set to avoid failures
+        case q => println("Failed to fetch uber records" + q); Set()
       }
-      catch {
-        case e: Exception => println(e.getMessage); None
-      }
-      // in case of failure just send blank set to avoid failures
-      priceSet match {
-        case ps: Some[Set[CostEstimate]] => ps.get.map(p => LyftPriceModel(p, source, destination))
-        case _ => Set()
-      }
+
     }
+
   }
 
 }
