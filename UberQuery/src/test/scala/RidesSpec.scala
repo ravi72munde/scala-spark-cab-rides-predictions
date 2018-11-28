@@ -10,7 +10,7 @@ class RidesSpec extends FlatSpec with Matchers {
 
   "An empty Set" should "have size 0" in {
     val uberAPI = mock[RidesAPI]
-    MockitoSugar.doReturn(None).when(uberAPI).getPrices(LocationRepository.backBay,LocationRepository.fenway)
+    MockitoSugar.doReturn(Set()).when(uberAPI).getPrices(LocationRepository.backBay,LocationRepository.fenway)
     val result = uberAPI.getPrices(LocationRepository.backBay,LocationRepository.fenway)
     println(result)
   }
