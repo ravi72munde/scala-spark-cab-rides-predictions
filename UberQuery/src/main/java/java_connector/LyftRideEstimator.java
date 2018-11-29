@@ -8,6 +8,7 @@ import com.lyft.networking.apis.LyftPublicApi;
 
 /**
  * Java class for getting data from Lyft API
+ * Deprecated in favor of Scala APIs Refer: LyftConnector
  */
 @Deprecated
 public class LyftRideEstimator {

@@ -40,8 +40,14 @@ object LocationRepository {
   //Sequence of 2nd set of locations.
   val destinationSeq: Seq[Location] = Seq(finDistrict, westEnd, beaconHill, theatreDist, backBay, northStation)
 
-  // Sequence of all the locations
-  val locations: Seq[Location] = sourceSeq ++ destinationSeq
+  /**
+    * Sequence of all the locations
+    *
+    * @return
+    */
+  def getLocations: Seq[Location] = {
+    sourceSeq ++ destinationSeq
+  }
 
   /**
     * creates a random pair of source and destination with a reverse ride

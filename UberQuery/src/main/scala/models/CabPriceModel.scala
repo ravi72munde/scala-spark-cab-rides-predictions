@@ -93,7 +93,7 @@ object UberPriceModel extends CabPriceModel[PriceEstimate] {
 /**
   *
   * Cab price implementation for Lyft prices.
-  * [??] is a java model for Uber prices
+  * [CostEstimate] is a java model for Lyft prices
   */
 object LyftPriceModel extends CabPriceModel[CostEstimate] {
   /**

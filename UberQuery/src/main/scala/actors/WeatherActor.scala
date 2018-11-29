@@ -14,6 +14,8 @@ class WeatherActor extends Actor with ActorLogging {
 
   import context.dispatcher
 
+  private val weatherAPI = new WeatherAPI
+
   override def receive: Receive = {
 
     //directly pipe the weather data to sender(Master)
@@ -22,6 +24,7 @@ class WeatherActor extends Actor with ActorLogging {
     case q => log.warning(s"received unknown message type: ${q.getClass}")
   }
 
+
   /**
     * Internal method to wrap the request in Future
     *
@@ -29,7 +32,7 @@ class WeatherActor extends Actor with ActorLogging {
     * @return
     */
   def getWeatherInfo(location: Location): Future[Option[Weather]] = {
-    val getWeather: Location => Option[Weather] = (x: Location) => WeatherAPI.getCurrentWeather(x)
+    val getWeather: Location => Option[Weather] = (x: Location) => weatherAPI.getCurrentWeather(x)
     Future(getWeather(location))
   }
 }

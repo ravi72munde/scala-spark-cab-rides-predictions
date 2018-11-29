@@ -1,25 +1,17 @@
-package rides
+package rides.connector
 
+import actors.CabRideSystem
 import com.uber.sdk.core.client.{ServerTokenSession, SessionConfiguration}
 import com.uber.sdk.rides.client.UberRidesApi
 import com.uber.sdk.rides.client.model.PriceEstimatesResponse
 import com.uber.sdk.rides.client.services.RidesService
+import org.slf4j.LoggerFactory
+import rides.connector.UberConnectorConfig.rideService
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Properties.envOrElse
 
-object UberConnector {
-
-  lazy val config: SessionConfiguration = new SessionConfiguration.Builder()
-    .setClientId(System.getenv("uber_clientId"))
-    .setServerToken(System.getenv("uber_token"))
-    .build
-
-  lazy val session: ServerTokenSession = new ServerTokenSession(config)
-
-
-  lazy val rideService: RidesService = UberRidesApi.`with`(session).build.createService
-
+class UberConnector extends RidesConnector[PriceEstimatesResponse] {
   /**
     *
     * @param startLatitude  of the source
@@ -30,6 +22,7 @@ object UberConnector {
     */
   def getPriceEstimates(startLatitude: Float, startLongitude: Float, endLatitude: Float, endLongitude: Float): Future[PriceEstimatesResponse] = {
 
+    implicit val executionContext = CabRideSystem.system.getDispatcher
     val priceEstimate: Future[PriceEstimatesResponse] = Future {
       rideService match {
         case service: RidesService => service.getPriceEstimates(startLatitude, startLongitude, endLatitude, endLongitude)
@@ -40,5 +33,21 @@ object UberConnector {
     }
     priceEstimate
   }
+}
+
+/**
+  * Configuration object for Uber
+  */
+private object UberConnectorConfig {
+  val rideService: RidesService = UberRidesApi.`with`(session).build.createService
+  private val log = LoggerFactory.getLogger(UberConnectorConfig.getClass)
+  private val config: SessionConfiguration = new SessionConfiguration.Builder()
+    .setClientId(envOrElse("uber_clientId", "NOT_DEFINED"))
+    .setServerToken(envOrElse("uber_token", "NOT_DEFINED"))
+    .build
+  private val session: ServerTokenSession = new ServerTokenSession(config)
+
+  log.info("Starting Uber Ride Service")
+
 
 }

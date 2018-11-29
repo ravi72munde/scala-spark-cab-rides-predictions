@@ -9,14 +9,14 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>./logs/akka.log</file>
+        <file>./logs/cab_rides.log</file>
         <append>true</append>
         <encoder>
             <pattern>%date{yyyy-MM-dd} %X{akkaTimestamp} %-5level[%thread] %logger{1} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="akka" level="DEBUG"/>
+    <logger name="connector" level="DEBUG"/>
 
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>

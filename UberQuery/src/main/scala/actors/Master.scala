@@ -21,15 +21,15 @@ class Master(numWeatherWorkers: Int, numUberWorkers: Int, numDynamoWorkers: Int)
 
   log.info("Master Actor started")
 
-  val weatherWorkerRouter: ActorRef = context.actorOf(
+  private val weatherWorkerRouter: ActorRef = context.actorOf(
     Props[WeatherActor].withRouter(RoundRobinPool(numWeatherWorkers)), name = "weatherWorkerPool")
   log.info("WeatherActor started with no. of workers = " + numWeatherWorkers)
 
-  val uberWorkerRouter: ActorRef = context.actorOf(
+  private val uberWorkerRouter: ActorRef = context.actorOf(
     Props[CabPriceActor].withRouter(RoundRobinPool(numUberWorkers)), name = "uberWorkerPool")
   log.info("UberWorker started with no. of workers = " + numUberWorkers)
 
-  val dynamoRouter: ActorRef = context.actorOf(
+  private val dynamoRouter: ActorRef = context.actorOf(
     Props[DynamoActor].withRouter(RoundRobinPool(numDynamoWorkers)),
     name = "dynamoWorkerPool")
   log.info("DynamoWorker started with no. of workers = " + numDynamoWorkers)
