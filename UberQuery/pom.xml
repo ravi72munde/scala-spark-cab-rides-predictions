@@ -33,13 +33,12 @@
             <artifactId>mockito-scala_2.12</artifactId>
             <version>1.0.5</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.uber.sdk/uber-rides -->
         <dependency>
             <groupId>com.uber.sdk</groupId>
             <artifactId>uber-rides</artifactId>
             <version>0.8.0</version>
-        </dependency><!-- https://mvnrepository.com/artifact/com.uber.sdk/uber-rides -->
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.gu/scanamo -->
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -58,22 +57,12 @@
             <version>0.4.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
-        <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
-        <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.12</artifactId>
             <version>3.2.0-SNAP9</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.danielasfregola/random-data-generator -->
-        <dependency>
-            <groupId>com.danielasfregola</groupId>
-            <artifactId>random-data-generator-magnolia_2.12</artifactId>
-            <version>2.6</version>
-        </dependency>
-
-
         <!-- https://mvnrepository.com/artifact/org.scalacheck/scalacheck -->
         <dependency>
             <groupId>org.scalacheck</groupId>
@@ -81,27 +70,6 @@
             <version>1.12.6</version>
             <scope>test</scope>
         </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>com.github.stefanbirkner</groupId>-->
-        <!--<artifactId>system-rules</artifactId>-->
-        <!--<version>1.19.0</version>-->
-        <!--<scope>test</scope>-->
-        <!--</dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.23.4</version>
-            <scope>test</scope>
-        </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.scalactic</groupId>-->
-        <!--<artifactId>scalactic_2.12</artifactId>-->
-        <!--<version>3.0.5</version>-->
-        <!--<scope>test</scope>-->
-        <!--</dependency>-->
-
         <!-- https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor -->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
@@ -131,8 +99,6 @@
             <artifactId>lyft-android-sdk-networking</artifactId>
             <version>1.0.3</version>
         </dependency>
-
-
     </dependencies>
 
     <repositories>
