@@ -1,10 +1,10 @@
 package dynamodb
 
-import models.{CabPrice, Weather}
+import actors.CabRideSystem
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemResult
 import com.gu.scanamo.{DynamoFormat, ScanamoAsync, Table}
+import models.{CabPrice, Weather}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -24,7 +24,9 @@ trait DynamoTrait[T] {
 /**
   * DynamoDB implementation for pushing cab rides to cloud
   */
-object UberCabImpl extends DynamoTrait[CabPrice] {
+object CabImpl extends DynamoTrait[CabPrice] {
+
+  private val client = LocalDynamoDB.client()
 
   /**
     * Put set of values into DynamoDB
@@ -33,13 +35,11 @@ object UberCabImpl extends DynamoTrait[CabPrice] {
     * @return : Future wrapped results
     */
   def put(vs: Seq[CabPrice]): Future[Seq[BatchWriteItemResult]] = {
-    val client = LocalDynamoDB.client()
-
     // float implicit conversion required for DynamoDB object conversions
     implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
-
-    val tbl = Table[CabPrice]("cab_rides")
-    val operations = tbl.putAll(vs.toSet)
+    implicit val executionContext = CabRideSystem.system.getDispatcher
+    val table = Table[CabPrice]("cab_rides")
+    val operations = table.putAll(vs.toSet)
     ScanamoAsync.exec(client)(operations)
   }
 }
@@ -47,7 +47,10 @@ object UberCabImpl extends DynamoTrait[CabPrice] {
 /**
   * Weather specific implementation
   */
-object DynamoWeatherImp extends DynamoTrait[Weather] {
+object WeatherImp extends DynamoTrait[Weather] {
+
+  private val client = LocalDynamoDB.client()
+
   /**
     * Put set of values into DynamoDB
     *
@@ -55,9 +58,8 @@ object DynamoWeatherImp extends DynamoTrait[Weather] {
     * @return : Future wrapped results
     */
   def put(vs: Seq[Weather]): Future[Seq[BatchWriteItemResult]] = {
-    val client = LocalDynamoDB.client()
-
     implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
+    implicit val executionContext = CabRideSystem.system.getDispatcher
 
     val table = Table[Weather]("weather")
     val operations = table.putAll(vs.toSet)

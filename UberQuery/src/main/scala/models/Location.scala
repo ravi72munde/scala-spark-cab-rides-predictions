@@ -9,8 +9,10 @@ package models
   *
   */
 case class Location(name: String, latitude: Float, longitude: Float)
-case class LocationBatch(locations:Seq[Location])
-case class LocationsTuples(lts:Seq[(Location,Location)])
+
+case class LocationBatch(locations: Seq[Location])
+
+case class LocationsTuples(lts: Seq[(Location, Location)])
 
 /**
   * Location Repository for busy locations in Boston City
@@ -38,8 +40,14 @@ object LocationRepository {
   //Sequence of 2nd set of locations.
   val destinationSeq: Seq[Location] = Seq(finDistrict, westEnd, beaconHill, theatreDist, backBay, northStation)
 
-  // Sequence of all the locations
-  val locations: Seq[Location] = sourceSeq ++ destinationSeq
+  /**
+    * Sequence of all the locations
+    *
+    * @return
+    */
+  def getLocations: Seq[Location] = {
+    sourceSeq ++ destinationSeq
+  }
 
   /**
     * creates a random pair of source and destination with a reverse ride
@@ -56,4 +64,6 @@ object LocationRepository {
     //append swapped tuple to the sequence of locations
     randomPair ++ randomPair.map(x => x.swap)
   }
+
+
 }

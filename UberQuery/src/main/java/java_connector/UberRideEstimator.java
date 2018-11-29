@@ -11,11 +11,11 @@ import java.io.IOException;
 /**
  * Java class for getting data from UBER API
  */
+@Deprecated
 public class UberRideEstimator {
 
-    private static RidesService rideService;
     private static final UberRideEstimator serviceInstance = new UberRideEstimator(); //final singleton variable
-
+    private static RidesService rideService;
 
     /**
      * Create a session config for Uber and service for getting estimates
@@ -32,19 +32,18 @@ public class UberRideEstimator {
     }
 
     /**
-     *
-     * @param startLatitude of the source
+     * @param startLatitude  of the source
      * @param startLongitude of the source
-     * @param endLatitude of the destination
-     * @param endLongitude of the destination
+     * @param endLatitude    of the destination
+     * @param endLongitude   of the destination
      * @return estimated price response from Uber API
      */
-    public static PriceEstimatesResponse getPriceEstimates(float startLatitude, float startLongitude, float endLatitude,float endLongitude) {
+    public static PriceEstimatesResponse getPriceEstimates(float startLatitude, float startLongitude, float endLatitude, float endLongitude) {
 
         PriceEstimatesResponse priceEstimate = null;
         try {
             priceEstimate = rideService
-                    .getPriceEstimates(startLatitude,startLongitude,endLatitude,endLongitude)
+                    .getPriceEstimates(startLatitude, startLongitude, endLatitude, endLongitude)
                     .execute()
                     .body();
         } catch (IOException e) {

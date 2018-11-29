@@ -19,7 +19,8 @@ import com.uber.sdk.rides.client.model.PriceEstimate
   * @param source           : Source of the trip
   * @param destination      : Destination of the trip
   */
-case class CabPrice(cab_type: String, product_id: String, name: String, price: Option[BigDecimal], distance: Option[Float], surge_multiplier: Float, time_stamp: Long, source: String, destination: String,id:String)
+case class CabPrice(cab_type: String, product_id: String, name: String, price: Option[BigDecimal], distance: Option[Float], surge_multiplier: Float, time_stamp: Long, source: String, destination: String, id: String)
+
 case class CabPriceBatch(cabPrices: Set[CabPrice]) {}
 
 /**
@@ -78,27 +79,28 @@ object UberPriceModel extends CabPriceModel[PriceEstimate] {
       case _ => 1f
     }
     val time_stamp = System.currentTimeMillis()
-    val id :String = UUID.randomUUID().toString
+    val id: String = UUID.randomUUID().toString
 
     // Create the generic CabPrice value
-    CabPrice("Uber", product_id, name, price, distance, surge_multiplier, time_stamp, source.name, destination.name,id)
+    CabPrice("Uber", product_id, name, price, distance, surge_multiplier, time_stamp, source.name, destination.name, id)
 
   }
 
 }
+
 /////////////////////////////////////////TO DO LYFT API BELOW/////////////////////////////////////////////////////
 
 /**
   *
-  *  Cab price implementation for Lyft prices.
-  *  [??] is a java model for Uber prices
+  * Cab price implementation for Lyft prices.
+  * [CostEstimate] is a java model for Lyft prices
   */
-object LyftPriceModel extends CabPriceModel[CostEstimate]{
+object LyftPriceModel extends CabPriceModel[CostEstimate] {
   /**
     *
     * @param priceEstimate : Source Objects from Lyft API
-    * @param source : Source of the trip(Location)
-    * @param destination : Destination of the trip(Location)
+    * @param source        : Source of the trip(Location)
+    * @param destination   : Destination of the trip(Location)
     * @return : CabPrice wrapped estimate
     */
   override def apply(priceEstimate: CostEstimate, source: Location, destination: Location): CabPrice = {
@@ -111,7 +113,7 @@ object LyftPriceModel extends CabPriceModel[CostEstimate]{
     //Average of max and min estimated price, can be null in some cases
     val price: Option[BigDecimal] = (priceEstimate.estimated_cost_cents_max, priceEstimate.estimated_cost_cents_min) match {
       case (_, null) | (null, _) => None
-      case (eh: Integer, el: Integer) => Some(BigDecimal(eh+el)/ 200) // cost estimate is in cents so divide by 100 to get in dollars.
+      case (eh: Integer, el: Integer) => Some(BigDecimal(eh + el) / 200) // cost estimate is in cents so divide by 100 to get in dollars.
     }
 
     //Distance between given source and destination
@@ -122,17 +124,23 @@ object LyftPriceModel extends CabPriceModel[CostEstimate]{
 
     //Price surge multiplier if present, else 1
     //Lyft gives the value in % of additional amount. Convert it to a multiplier
-    val surge_multiplier: Float = {"""\d+""".r findFirstIn priceEstimate.primetime_percentage match {
-      case b: Option[String] => try{b.get.toFloat/100} catch {case _: Exception=> 1f} //convert % to float
-      case _ => 1f
-    }} + 1 //add 1 to convert % to a multiplier
+    val surge_multiplier: Float = {
+      """\d+""".r findFirstIn priceEstimate.primetime_percentage match {
+        case b: Option[String] => try {
+          b.get.toFloat / 100
+        } catch {
+          case _: Exception => 1f
+        } //convert % to float
+        case _ => 1f
+      }
+    } + 1 //add 1 to convert % to a multiplier
 
 
     val time_stamp = System.currentTimeMillis()
-    val id :String = UUID.randomUUID().toString
+    val id: String = UUID.randomUUID().toString
     // Create the generic CabPrice value
 
-    CabPrice("Lyft", product_id, name, price, distance, surge_multiplier, time_stamp, source.name, destination.name,id)
+    CabPrice("Lyft", product_id, name, price, distance, surge_multiplier, time_stamp, source.name, destination.name, id)
 
   }
 }

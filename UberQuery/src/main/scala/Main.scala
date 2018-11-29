@@ -1,8 +1,8 @@
 
-import actors.Master
+import actors.{CabRideSystem, Master}
+import akka.actor.Props
 import models.LocationRepository.getPairedLocations
 import models._
-import akka.actor.{ActorSystem, Props}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -12,24 +12,23 @@ import scala.concurrent.duration._
   */
 object Main extends App {
 
-  /*Actor System for the project*/
-  val system = ActorSystem("CabRideSystem")
-
+  val system = CabRideSystem.system
   /*All locations from repository*/
-  val locations = LocationRepository.locations
+  val locations = LocationRepository.getLocations
 
   /*Set up master actor for supervising all workers*/
-  val master = system.actorOf(Props(new Master(numWeatherWorkers = locations.size, numUberWorkers = locations.size , 2)),
+  val master = system.actorOf(Props(new Master(numWeatherWorkers = locations.size, numUberWorkers = locations.size, 2)),
     "master")
 
   /*Schedule Weather Job with specified interval*/
-  system.scheduler.schedule(0 seconds, 30 minutes)(
+  system.scheduler.schedule(0 seconds, 1 hour)(
     master ! locations
   )
 
   /*Schedule Cab Price Estimator Job with specified interval*/
-  system.scheduler.schedule(0 seconds, 3 minute)(
+  system.scheduler.schedule(0 seconds, 5 minute)(
     master ! LocationsTuples(getPairedLocations)
   )
+
 
 }

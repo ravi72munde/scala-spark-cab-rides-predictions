@@ -1,16 +1,23 @@
 package rides
 
+import com.lyft.networking.apiObjects.CostEstimateResponse
+import com.uber.sdk.rides.client.model.PriceEstimatesResponse
 import models.{CabPrice, Location, LyftPriceModel, UberPriceModel}
-import com.lyft.networking.apiObjects.CostEstimate
-import com.uber.sdk.rides.client.model.PriceEstimate
-import java_connector.{LyftRideEstimator, UberRideEstimator}
+import org.slf4j.LoggerFactory
+import rides.connector.{LyftConnector, RidesConnector, UberConnector}
 
 import scala.collection.JavaConverters._
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 /**
   * Trait to model cab prices
   */
 trait RidesAPI {
+
+  // Connector for rides
+  val ridesConnector: RidesConnector[_]
+
   /**
     * @param source      location of the trip
     * @param destination location of the trip
@@ -24,6 +31,11 @@ trait RidesAPI {
   */
 object UberAPI extends RidesAPI {
 
+  // uberConnector
+  override val ridesConnector = new UberConnector
+  private val log = LoggerFactory.getLogger(UberAPI.getClass)
+
+
   /**
     * @param source      location of the trip
     * @param destination location of the trip
@@ -32,45 +44,58 @@ object UberAPI extends RidesAPI {
   override def getPrices(source: Location, destination: Location): Set[CabPrice] = {
 
 
-    val priceSet: Option[Set[PriceEstimate]] = try {
-      val ep = UberRideEstimator.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
-      Some(ep.getPrices.asScala.toSet)
-    } catch {
-      case e: Exception => println(e.getMessage); None
+    // future wrapped price estimate from uber api
+    val epf: Future[PriceEstimatesResponse] = ridesConnector.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
+
+    //process data in sync
+    val result = Await.result(epf, 30 seconds)
+    result match {
+      case pe: PriceEstimatesResponse => {
+        pe.getPrices
+          .asScala.map(UberPriceModel(_, source, destination))
+          .toSet
+      }
+      // in case of failure just send blank set to avoid failures
+      case q => log.error("Failed to fetch uber records. Got " + q + " instead of PriceEstimateResponse"); Set()
     }
 
-    // in case of failure just send blank set to avoid failures
-    priceSet match {
-      case ps: Some[Set[PriceEstimate]] => ps.get.map(p => UberPriceModel(p, source, destination))
-      case _ => Set()
-    }
   }
 
 
   /**
     * Lyft Specific implementation
     */
-
   object LyftAPI extends RidesAPI {
+
+
+    override val ridesConnector = new LyftConnector
+    private val log = LoggerFactory.getLogger(LyftAPI.getClass)
+
     /**
       * @param source      location of the trip
       * @param destination location of the trip
       * @return set[SabPrices]
       */
     override def getPrices(source: Location, destination: Location): Set[CabPrice] = {
-      val priceSet: Option[Set[CostEstimate]] = try {
-        val ec = LyftRideEstimator.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
-        Some(ec.cost_estimates.asScala.toSet)
+      // future wrapped price estimate from lyft api
+
+      val cef: Future[CostEstimateResponse] = ridesConnector.getPriceEstimates(source.latitude, source.longitude, destination.latitude, destination.longitude)
+
+      //process data in sync
+      val result: CostEstimateResponse = Await.result(cef, 30 seconds)
+      result match {
+        case cer: CostEstimateResponse => {
+          cer.cost_estimates
+            .asScala.map(LyftPriceModel(_, source, destination))
+            .toSet
+        }
+        // in case of failure just send blank set to avoid failures
+        case q => log.error("Failed to fetch uber records. Got " + q + " instead of CostEstimateResponse"); Set()
       }
-      catch {
-        case e: Exception => println(e.getMessage); None
-      }
-      // in case of failure just send blank set to avoid failures
-      priceSet match {
-        case ps: Some[Set[CostEstimate]] => ps.get.map(p => LyftPriceModel(p, source, destination))
-        case _ => Set()
-      }
+
+
     }
+
   }
 
 }
