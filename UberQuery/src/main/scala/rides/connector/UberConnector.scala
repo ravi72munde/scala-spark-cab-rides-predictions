@@ -39,13 +39,13 @@ class UberConnector extends RidesConnector[PriceEstimatesResponse] {
   * Configuration object for Uber
   */
 private object UberConnectorConfig {
-  val rideService: RidesService = UberRidesApi.`with`(session).build.createService
   private val log = LoggerFactory.getLogger(UberConnectorConfig.getClass)
   private val config: SessionConfiguration = new SessionConfiguration.Builder()
     .setClientId(envOrElse("uber_clientId", "NOT_DEFINED"))
     .setServerToken(envOrElse("uber_token", "NOT_DEFINED"))
     .build
   private val session: ServerTokenSession = new ServerTokenSession(config)
+  val rideService: RidesService = UberRidesApi.`with`(session).build.createService
 
   log.info("Starting Uber Ride Service")
 

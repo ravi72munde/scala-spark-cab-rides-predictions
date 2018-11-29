@@ -38,12 +38,12 @@ class LyftConnector extends RidesConnector[CostEstimateResponse] {
   * Configuration object for Uber
   */
 private object LyftConnectorConfig {
-  val rideService: LyftPublicApi = new LyftApiFactory(apiConfig).getLyftPublicApi
   private val log = LoggerFactory.getLogger(LyftConnectorConfig.getClass)
   private val apiConfig: ApiConfig = new ApiConfig.Builder()
     .setClientId(envOrElse("lyft_clientID", "NOT_DEFINED"))
     .setClientToken(envOrElse("lyft_client_token", "NOT_DEFINED"))
     .build
+  val rideService: LyftPublicApi = new LyftApiFactory(apiConfig).getLyftPublicApi
 
   log.info("Starting Lyft Ride Service")
 }
