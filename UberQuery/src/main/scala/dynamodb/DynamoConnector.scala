@@ -38,8 +38,8 @@ object UberCabImpl extends DynamoTrait[CabPrice] {
     // float implicit conversion required for DynamoDB object conversions
     implicit val floatAttribute = DynamoFormat.coercedXmap[Float, String, IllegalArgumentException](_.toFloat)(_.toString)
 
-    val table = Table[CabPrice]("cab_rides")
-    val operations = table.putAll(vs.toSet)
+    val tbl = Table[CabPrice]("cab_rides")
+    val operations = tbl.putAll(vs.toSet)
     ScanamoAsync.exec(client)(operations)
   }
 }

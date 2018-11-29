@@ -56,8 +56,4 @@ object LocationRepository {
     //append swapped tuple to the sequence of locations
     randomPair ++ randomPair.map(x => x.swap)
   }
-
-
-
-
 }

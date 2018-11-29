@@ -42,7 +42,7 @@ object WeatherModel extends WeatherModel[Responses.DarkSkyResponse] {
       weatherResponse.currently.get.temperature
     }
     catch {
-      case e: Exception => e.printStackTrace();None
+      case e: Exception => e.printStackTrace(); None
     }
     val humidity: Option[Float] = try {
       weatherResponse.currently.get.humidity
