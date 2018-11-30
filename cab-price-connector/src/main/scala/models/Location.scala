@@ -18,7 +18,7 @@ case class LocationsTuples(lts: Seq[(Location, Location)])
   * Location Repository for busy locations in Boston City
   *
   */
-object LocationRepository {
+object LocationRepository{
 
   val fenway = Location("Fenway", 42.342907f, -71.100292f)
   val southStation = Location("South Station", 42.352141f, -71.055135f)
