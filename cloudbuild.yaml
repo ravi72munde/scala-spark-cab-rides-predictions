@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/mvn'
+  args: ['test']
+- name: 'gcr.io/cloud-builders/mvn'
+  args: ['package']
