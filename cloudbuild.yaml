@@ -1,5 +1,7 @@
 steps:
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['test']
+  dir: 'cab-price-connector/'
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['package']
+  dir: 'cab-price-connector/'
