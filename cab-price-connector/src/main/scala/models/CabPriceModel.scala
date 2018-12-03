@@ -3,6 +3,7 @@ package models
 import java.util.UUID
 
 import com.lyft.networking.apiObjects.CostEstimate
+import com.sun.javafx.util.Logging
 import com.uber.sdk.rides.client.model.PriceEstimate
 
 
