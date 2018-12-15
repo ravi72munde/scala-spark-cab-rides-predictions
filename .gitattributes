@@ -2,3 +2,4 @@ cab-price-connector/* linguist-vendored
 *.html linguist-vendored=false 
 *.pptx linguist-vendored=false
 *.ipynb linguist-vendored=false
+*.html linguist-detectable=false
