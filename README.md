@@ -50,3 +50,10 @@ Sample log of Actor System Running on EC2</br>
 
 
 *NOTE: AWS Creditials need to be put in environment vairables*
+
+### Model Evaluation Matrices
+* Random Forrest Regression's Price Prediction Accuracy : 92.79 %
+* Random Forrest Classification Surge Prediction Accuracy: 77.69 %</br>
+  
+Confusion Matrix for the Classifier</br>
+<img src="ConfusionMatrix.PNG" alt="drawing" width="250"/>
