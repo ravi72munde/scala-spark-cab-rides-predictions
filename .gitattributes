@@ -1,2 +1,2 @@
-*.html linguist-vendored=false
+cab-price-connector/* linguist-vendored
 *.ipynb linguist-vendored=false
