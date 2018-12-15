@@ -93,7 +93,6 @@ object UberAPI extends RidesAPI {
         case q => log.error("Failed to fetch uber records. Got " + q + " instead of CostEstimateResponse"); Set()
       }
 
-
     }
 
   }

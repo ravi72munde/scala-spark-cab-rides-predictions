@@ -50,8 +50,7 @@ class Master(numWeatherWorkers: Int, numUberWorkers: Int, numDynamoWorkers: Int)
     }
 
     // Process tuple of locations to retrieve weather info. Once all weather workers are done processing, pipe the data to Dynamo Worker
-    case locationsBatch: Seq[Location] => //noinspection RedundantBlock
-    {
+    case locationsBatch: Seq[Location] => {
       // wait for all the workers to send data and then process
       val weatherBatchResult = Future.sequence(locationsBatch.map(weatherWorkerRouter ? _).map(_.mapTo[Some[Weather]])).map(processWeather)
 
