@@ -1,5 +1,6 @@
 # scala-spark-cab-rides-predictions
 A big data project for predicting prices of Uber/Lyft rides depending on the weather
+Dataset was compiled and uploaded to Kaggle. Can be found here https://www.kaggle.com/ravi72munde/uber-lyft-cab-prices
 
 ## Contributors:
 * Ravi Munde
